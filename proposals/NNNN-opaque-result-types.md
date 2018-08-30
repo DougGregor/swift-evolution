@@ -20,7 +20,7 @@ extension LazyMapCollection {
 }
 ```
 
-With this proposal, the standard library could hide the result type, exposing it as "an opaque `Colection` whose `Element` type is `U`:
+With this proposal, the standard library could hide the result type, exposing it as "an opaque `Collection` whose `Element` type is `U`:
 
 ```swift
 private struct LazyCompactMapCollection<Base: Collection, Element> { ... }
