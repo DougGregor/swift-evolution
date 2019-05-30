@@ -628,7 +628,7 @@ in one of three ways:
     parameter of the same type as the `value` property (or
     be an `@autoclosure` thereof) and have the same access level as the 
     property wrapper type itself. When `init(initialValue:)` is present,
-    is is always used for the initial value provided on the property
+    it is always used for the initial value provided on the property
     declaration. For example:
     
     ```swift
@@ -1153,7 +1153,7 @@ public class MyClass: Superclass {
 }
 ```
 
-This "broadcast a notification that the value has changed" implementation cannot be cleanly factored into a property behavior type, because it needs access to both the underlying storage value (here, `backingMyVar`) and the `self` of the enclosing type. We could require a separate call to register the `self` instance with the wrapper type, e.g.,
+This "broadcast a notification that the value has changed" implementation cannot be cleanly factored into a property wrapper type, because it needs access to both the underlying storage value (here, `backingMyVar`) and the `self` of the enclosing type. We could require a separate call to register the `self` instance with the wrapper type, e.g.,
 
 ```swift
 protocol Observed {
