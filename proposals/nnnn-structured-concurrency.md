@@ -99,20 +99,20 @@ Introducing `async let` into the loop would not produce any meaningful concurren
 /// Concurrently chop the vegetables.
 func chopVegetables() async throws -> [Vegetable] {
   // Create a task group where each task produces (Int, Vegetable).
-  await try Task.withGroup(resultType: (Int, Vegetable).self) { taskGroup in 
+  await try Task.withGroup(resultType: (Int, Vegetable).self) { group in 
     var veggies: [Vegetable] = gatherRawVeggies()
     
     // Create a new child task for each vegetable that needs to be 
     // chopped.
     for i in veggies.indices {
-      await try taskGroup.add { 
+      await try group.add { 
         (i, veggies[i].chopped())
       }
     }
 
     // Wait for all of the chopping to complete, slotting each result
     // into its place in the array as it becomes available.
-    while let (index, choppedVeggie) = await try taskGroup.next() {
+    while let (index, choppedVeggie) = await try group.next() {
       veggies[index] = choppedVeggie
     }
     
@@ -505,18 +505,18 @@ In the `chopVegetables()` example we not only added vegetable chopping tasks to 
 
 ```swift
 func chopVegetables(rawVeggies: [Vegetable]) async throws -> [ChoppedVegetable] {
-  await try Task.withGroup(resultType: ChoppedVegetable.self) { taskGroup in    
+  await try Task.withGroup(resultType: ChoppedVegetable.self) { group in    
     var choppedVeggies: [ChoppedVegetable] = []
     choppedVeggies.reserveCapacity(veggies.count)
         
     // add all chopping tasks and process them concurrently
     for v in rawVeggies {
-      await try taskGroup.add { // await the successful adding of the task 
+      await try group.add { // await the successful adding of the task 
         await v.chopped() // await the processing result of task
       }
     }
 
-    while let choppedVeggie = await try taskGroup.next() { 
+    while let choppedVeggie = await try group.next() { 
       choppedVeggies.append(choppedVeggie)
     }
     
@@ -535,16 +535,16 @@ To visualize this, let us consider chopping vegetables again. One type of vegeta
 
 ```swift
 func chopOnionsAndCarrots(rawVeggies: [Vegetable]) async throws -> [Vegetable] {
-  await try Task.withGroup { taskGroup in // (3) will re-throw the onion chopping error
+  await try Task.withGroup { group in // (3) will re-throw the onion chopping error
     // kick off asynchronous vegetable chopping:
     for v in rawVeggies {
-      await try taskGroup.add { 
+      await try group.add { 
         await try v.chopped() // (1) throws
       }
     }
     
     // collect chopped up results:
-    while let choppedVeggie = await try taskGroup.next() { // (2) will throw for the onion
+    while let choppedVeggie = await try group.next() { // (2) will throw for the onion
       choppedVeggies.append(choppedVeggie)
     }
   }
@@ -570,13 +570,14 @@ struct WorkItem {
 }
 
 let handle = Task.runDetached {
-  await try Task.withGroup(resultType: Int.self) { taskGroup in
+  await try Task.withGroup(resultType: Int.self) { group in
     var processed = 0
     for w in workItems { // (3)
-      try await taskGroup.add { await w.process() }
+      try await group
+     .add { await w.process() }
     }
     
-    while let result = try await taskGroup.next() { 
+    while let result = try await group.next() { 
       processed += 1
     }
     
@@ -600,9 +601,9 @@ In the following example we need to confirm each order that we received, however
 
 ```swift
 func confirmOrders(orders: [Order]) async throws {
-  await try Task.withGroup { taskGroup in 
+  await try Task.withGroup { group in 
     for order in orders {
-      await try taskGroup.add { await order.confirm() } 
+      await try group.add { await order.confirm() } 
     }
   }
 }
