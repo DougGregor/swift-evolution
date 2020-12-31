@@ -243,7 +243,7 @@ We can then re-implement `makeDinner` with only a task group:
 
 ```swift
 func makeDinnerTaskGroup() async throws -> Meal {
-  withTaskGroup(resultType: DinnerChildTask.self) { group in    
+  return try await Task.withGroup(resultType: DinnerChild.self) { group in    
     await group.add {
       DinnerChild.chopVegetables(await chopVegetables())
     }
@@ -260,6 +260,7 @@ func makeDinnerTaskGroup() async throws -> Meal {
     var meat: Meat? = nil
     var oven: Oven? = nil
     var dish: Dish? = nil
+    
     while let child = try await group.next() {
       switch child {
         case .chopVegetables(let newVeggies):
