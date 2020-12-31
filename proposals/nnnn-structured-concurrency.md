@@ -245,7 +245,7 @@ We can then re-implement `makeDinner` with only a task group:
 func makeDinnerTaskGroup() async throws -> Meal {
   withTaskGroup(resultType: DinnerChildTask.self) { group in    
     await group.add {
-      DinnerChild.chopVegetables(await chopVegetables())
+      DinnerChild.chopVegetables(try await chopVegetables())
     }
     
     await group.add {
@@ -253,7 +253,7 @@ func makeDinnerTaskGroup() async throws -> Meal {
     }
     
     await group.add {
-      DinnerChild.preheatOven(await preheatOven(temperature: 350))
+      DinnerChild.preheatOven(try await preheatOven(temperature: 350))
     }
     
     var veggies: [Vegetable]? = nil
