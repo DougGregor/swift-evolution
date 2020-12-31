@@ -206,7 +206,7 @@ func chopVegetables() async throws -> [Vegetable] {
     // chopped.
     for i in veggies.indices {
       await group.add { 
-        (i, veggies[i].chopped())
+        (i, try await veggies[i].chopped())
       }
     }
 
