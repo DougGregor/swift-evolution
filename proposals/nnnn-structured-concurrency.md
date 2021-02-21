@@ -156,6 +156,12 @@ To illustrate task groups, let's start by showing how we can introduce some
 real concurrency to our `makeDinner` example:
 
 ```swift
+func chopVegetables() async throws -> [Vegetable] { ... }
+func marinateMeat() async -> Meat { ... }
+func preheatOven(temperature: Double) async throws -> Oven { ... }
+
+// ...
+
 func makeDinner() async throws -> Meal {
   // Prepare some variables to receive results from our concurrent child tasks
   var veggies: [Vegetable]?
