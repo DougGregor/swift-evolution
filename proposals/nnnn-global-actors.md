@@ -58,7 +58,7 @@ The type of `shared` must be an actor type. The shared instance is a globally-un
 As illustrated in our first example, both functions and data can be attributed with a global actor type to isolate them to that global actor. Note that global actors are not restricted to global functions or data as in the first example. One can mark members of types as belonging to a global actor as well. For example, in a view controller for a graphical UI, we would expect to receive notification of user interactions on the main thread, and must update the UI on the main thread. Therefore want both the methods called on notification and also the data they use to be on the main actor. Here's an small part of a view controller from some [AppKit sample code](https://developer.apple.com/documentation/appkit/cocoa_bindings/navigating_hierarchical_data_using_outline_and_split_views):
 
 ```swift
-class IconViewController: UIViewController {
+class IconViewController: NSViewController {
   @MainActor @objc private dynamic var icons: [[String: Any]] = []
     
   @MainActor var url: URL?
@@ -95,7 +95,7 @@ It is common for entire types (and even class hierarchies) to predominantly requ
 
 ```swift
 @MainActor
-class IconViewController: UIViewController {
+class IconViewController: NSViewController {
    @objc private dynamic var icons: [[String: Any]] = [] // implicitly @MainActor
     
   var url: URL? // implicitly @MainActor
