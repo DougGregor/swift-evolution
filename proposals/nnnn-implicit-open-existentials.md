@@ -26,7 +26,7 @@ func test(p: any P) {
 
 This interaction with the generics system makes existentials a bit of a trap in Swift: it's easy to go from generics to existentials, but once you have an existential it is very hard to go back to using it generically. At worst, you need to go back through many levels of functions, changing their parameters or results from `any P` to being generic over `P`, or writing a custom [type eraser](https://www.swiftbysundell.com/articles/different-flavors-of-type-erasure-in-swift/). 
 
-This proposal addresses this existential trap by allowing one to "open" an existential value, binding a generic parameter to its underlying type. Doing so allows us to call a generic function with an existential value, such that the generic function operations on the underlying value of the existential rather than on the existential box itself, making it possible to get out of the existential trap without major refactoring.
+This proposal addresses this existential trap by allowing one to "open" an existential value, binding a generic parameter to its underlying type. Doing so allows us to call a generic function with an existential value, such that the generic function operates on the underlying value of the existential rather than on the existential box itself, making it possible to get out of the existential trap without major refactoring.
 
 Swift-evolution thread: [Discussion thread topic for that proposal](https://forums.swift.org/)
 
