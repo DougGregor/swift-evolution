@@ -68,7 +68,7 @@ On the other hand, purely syntactic translations have a number of downsides, too
 * Syntactic macro expansions are re-parsed and re-type-checked, which incurs more compile-time overhead than an approach that (say) manipulated the AST or IR directly.
 * Syntactic macros are not *hygienic*, meaning that the way in which a macro expansion is processed depends on the environment in which it is expanded, and can affect that environment. 
 
-The proposed macro design attempts to mitigate these problems, but they are somewhat fundamental to the use of syntactic macros. On balance, the ease-of-use and easy-of-interpretation of syntactic macros outweighs these problems.
+The proposed macro design attempts to mitigate these problems, but they are somewhat fundamental to the use of syntactic macros. On balance, the ease-of-use and ease-of-interpretation of syntactic macros outweighs these problems.
 
 ### Macros defined as separate programs
 
