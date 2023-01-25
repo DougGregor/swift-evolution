@@ -90,7 +90,7 @@ The actual implementation of this macro involves a bit of syntax manipulation, s
 public struct AddCompletionHandler: PeerDeclarationMacro {
   public static func expansion(
     of node: CustomAttributeSyntax,
-    peersOf declaration: DeclSyntax,
+    providingPeersOf declaration: DeclSyntax,
     in context: inout MacroExpansionContext
   ) throws -> [DeclSyntax] {
     // make sure we have an async function to start with
@@ -227,7 +227,7 @@ protocol AccessorMacro: AttachedMacro {
   /// the attribute is attached.
   static func expansion(
     of node: AttributeSyntax,
-    accessorsOf declaration: DeclSyntax,
+    providingAccessorsOf declaration: DeclSyntax,
     in context: inout MacroExpansionContext
   ) throws -> [AccessorDeclSyntax]  
 }
@@ -293,7 +293,7 @@ protocol MemberAttributeMacro: AttachedMacro {
 }
 ```
 
-The `expansion` operation accepts the attribute syntax `node` for the spelling of the member attribute macro and the declaration to which that attribute is attached (i.e., the type or extension). The implementation of the macro can walk the members of the `declaration` to determine which members require additional attributes. The returned dictionary will map from those members to the additional attributes that should be added to each of the members.
+The `expansion` operation accepts the attribute syntax `node` for the spelling of the member attribute macro and the declaration to which that attribute is attached (i.e., the type or extension). The method is called for each `member` and can return additional attributes that should be added to it.
 
 ## Detailed design
 
@@ -446,7 +446,7 @@ The proposal for freestanding macros introduced the need to [specify macro-intro
 * Declarations whose name is formed by adding a prefix to the name of the declaration to which the macro is attached: `prefixed("_")`
 * Declarations whose name is formed by adding a suffix to the name of the declaration to which the macro is attached: `suffixed("_docinfo")`. 
 
-A  macro can only introduce new declarations whose names are covered by the kinds provided, or have their names generated via `MacroExpansionContext.createUniqueame`. This ensures that, in most cases (where `arbitrary` is not specified), the Swift compiler and related tools can reason about the set of names that will introduced by a given use of a macro without having to expand the macro, which can reduce the compile-time cost of macros and improve incremental builds.
+A  macro can only introduce new declarations whose names are covered by the kinds provided, or have their names generated via `MacroExpansionContext.createUniqueName`. This ensures that, in most cases (where `arbitrary` is not specified), the Swift compiler and related tools can reason about the set of names that will introduced by a given use of a macro without having to expand the macro, which can reduce the compile-time cost of macros and improve incremental builds.
 
 ### Ordering of macro expansions
 
