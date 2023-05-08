@@ -176,7 +176,7 @@ The `identifier` in an `init-dependency-clause`, if provided, is the name of the
 
 ### `init` accessor signatures
 
-`init` accessor declarations can optionally specify a signature. An `init` accessor signature is composed of the `newValue` parameter, a list of stored properties that are initialized by this accessor specified with the `initializes:` label, and a list of stored properties that are accessed by this accessor specified with the `accesses:` label:
+`init` accessor declarations can optionally specify a signature. An `init` accessor signature is composed of a parameter for the initial value, a list of stored properties that are initialized by this accessor specified with the `initializes:` label, and a list of stored properties that are accessed by this accessor specified with the `accesses:` labe, all of which are optionall:
 
 ```swift
 struct S {
@@ -196,11 +196,11 @@ struct S {
 }
 ```
 
-If the accessor only uses `newValue`, the signature is not required.
+If the accessor uses the default parameter name `newValue` and neither initializes nor accesses any stored property, the signature is not required.
 
-Init accessors can subsume the initialization of a set of stored properties. Subsumed stored properties are specified through the `initializes:` clause of the accessor signature. The body of an `init` accessor is required to initialize the subsumed stored properties on all paths.
+Init accessors can subsume the initialization of a set of stored properties. Subsumed stored properties are specified through the `initializes:` clause of the accessor signature. The body of an `init` accessor is required to initialize the subsumed stored properties on all control flow paths.
 
-Init accessors can also require a set of stored properties to already be initialized when the body is evaluated, which are specified through the `accesses:` cause of the signature. These stored properties can be accessed in the accessor body; no other properties or methods on `self` are available inside the accessor body.
+Init accessors can also require a set of stored properties to already be initialized when the body is evaluated, which are specified through the `accesses:` cause of the signature. These stored properties can be accessed in the accessor body; no other properties or methods on `self` are available inside the accessor body, nor is `self` available as a whole object (i.e., to call methods on it).
 
 ### Definite initialization of properties on `self`
 
