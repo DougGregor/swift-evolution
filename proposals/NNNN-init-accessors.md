@@ -204,7 +204,7 @@ Init accessors can also require a set of stored properties to already be initial
 
 ### Definite initialization of properties on `self`
 
-The semantics of an assignment inside of a type's initializer depend on whether or not all of `self` is initialized on all paths at the point of assignment. Before all of `self` is initialized, assignment to a computed property with an `init` accessor is re-written to an `init` accessor call; after `self` has been initialized, assignment to a computed property re-written to a setter call.
+The semantics of an assignment inside of a type's initializer depend on whether or not all of `self` is initialized on all paths at the point of assignment. Before all of `self` is initialized, assignment to a computed property with an `init` accessor is re-written to an `init` accessor call; after `self` has been initialized, assignment to a computed property is re-written to a setter call.
 
 With this proposal, all of `self` is initialized if:
 * All stored properties are initialized on all paths, and
