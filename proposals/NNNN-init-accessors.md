@@ -204,13 +204,13 @@ Init accessors can also require a set of stored properties to already be initial
 
 ### Definite initialization of properties on `self`
 
-The semantics of an assignment inside of a type's initializer depend on whether or not all of `self` is initialized on all paths at the point of assignment. Before `self` is initialized, assignment to a wrapped property is re-written to initialization of the backing property wrapper storage. After `self` is initialized, assignment to a wrapped property is re-written to a call to the wrapped property's setter. For computed properties with `init` accessors, assignment is re-written to an `init` accessor call before `self` is initialized, and assignment is re-written to a setter call after `self` is initialized.
+The semantics of an assignment inside of a type's initializer depend on whether or not all of `self` is initialized on all paths at the point of assignment. Before all of `self` is initialized, assignment to a computed property with an `init` accessor is re-written to an `init` accessor call; after `self` has been initialized, assignment to a computed property re-written to a setter call.
 
 With this proposal, all of `self` is initialized if:
-* All stored properties are initialized on all paths.
+* All stored properties are initialized on all paths, and
 * All computed properties with `init` accessors are virtually initialized on all paths.
 
-An assignment to a computed property with an `init` accessor before all of `self` is initialized covers the computed property and all stored properties specified in the `initializes` clause:
+An assignment to a computed property with an `init` accessor before all of `self` is initialized will virtually initialize the computed property and initialize all of the stored properties specified in its `initializes` clause:
 
 ```swift
 struct S {
@@ -221,28 +221,31 @@ struct S {
   }
 
   init() {
-    self.computed = 1 // initializes 'computed', 'x1', and 'x2'
+    self.computed = 1 // initializes 'computed', 'x1', and 'x2'; 'self' is now fully initialized
   }
 }
 ```
 
-An assignment to a stored property before all of `self` is initialized covers the initialization of computed properties with `init` accessors that specify that stored property if the other `initializes:` dependencies are already initialized:
+An assignment to a stored property before all of `self` is initialized will initialize that stored property. When all of the stored properties listed in the `initializes:` clause of a computed property with an `init` accessor have been initialized, that computed property is virtually initialized:
 
 ```swift
 struct S {
   var x1: Int
   var x2: Int
+  var x3: Int
   var computed: Int {
     init(newValue, initializes: x1, x2) { ... }
   }
 
   init() {
-    self.computed = 1 // initializes 'computed', 'x1', and 'x2'
+    self.x1 = 1 // initializes 'x1'; neither 'x2' or 'computed' is initialized
+    self.x2 = 1 // initializes 'x2' and 'computed'
+    self.x3 = 1 // initializes 'x3'; 'self' is now fully initialized
   }
 }
 ```
 
-A stored property is considered initialized if it is assigned a value directly, or if a computed property that subsumes its initialization is assigned a value directly:
+An assignment to a computed property where at least one of the stored properties listed in `initializes:` is initialized, but `self` is not initialized, is an error. This prevents double-initialization of the underlying stored properties:
 
 ```swift
 struct S {
@@ -258,7 +261,7 @@ struct S {
 
   init(x: Int, y: Int) {
     self.x = x // Only initializes 'x'
-    self.y = y // Initializes 'y' and 'point'
+    self.point = (x, y) // error: neither the `init` accessor nor the setter can be called here
   }
 }
 ```
