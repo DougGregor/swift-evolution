@@ -151,16 +151,17 @@ This proposal adds new syntax for `init` accessor blocks, which can be written i
 ```
 init-accessor -> 'init' init-accessor-signature[opt] function-body
 
-init-accessor-signature -> '(' init-dependency-clause ')'
+init-accessor-signature -> '(' init-dependency-clause [opt] ')'
 
-init-dependency-clause -> 'newValue'
-init-dependency-clause -> 'newValue' ',' init-dependencies
+init-dependency-clause -> identifier
+init-dependency-clause -> identifier ',' init-dependencies
+init-dependency-clause -> init-dependencies
 
-init-dependencies -> subsumes-list
-init-dependencies -> subsumes-list ',' accesses-list
+init-dependencies -> initializes-list
+init-dependencies -> initializes-list ',' accesses-list
 init-dependences -> access-list
 
-subsumes-list -> 'initializes' ':' identifier-list
+initializes-list -> 'initializes' ':' identifier-list
 
 accesses-list -> 'accesses' ':' identifier-list
 
@@ -170,6 +171,8 @@ identifier-list -> identifier ',' identifier-list
 // Not actually sure if `get` and `set` appearing once is baked into the grammar or is a semantic restriction
 accessor-block -> init-accessor
 ```
+
+The `identifier` in an `init-dependency-clause`, if provided, is the name of the parameter that contains the initial value. If not provided, a parameter with the name `newValue` is automatically created.
 
 ### `init` accessor signatures
 
