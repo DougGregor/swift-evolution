@@ -75,7 +75,42 @@ struct Angle {
 }
 ```
 
-The signature of an `init` accessor specifies the property's access dependencies and the set of stored properties that are initialized by the accessor. Access dependencies must be initialized before the computed property's `init` accessor is invoked, and the `init` accessor must initialize the specified stored properties on all control flow paths.
+The signature of an `init` accessor specifies up to two sets of stored properties: the access dependencies (via `accesses`) and the initialized properties (via `initializes`). Access dependencies specify the other stored properties that can be accessed from within the `init` accessor (no other uses of `self` are allowed), and therefore must be initialized before the computed property's `init` accessor is invoked. The `init` accessor must initialize each of the initialized stored properties on all control flow paths. The `radians` property in the example above specifies no access dependencies, but initializes the `degrees` property, so it specifies only `initializes: degrees`.
+
+Access dependencies allow a computed property to be initialized by placing its contents into another stored property:
+
+```swift
+struct ProposalViaDictionary {
+  private var dictionary: [String: String] = [:]
+
+  var title: String {
+    init(newValue, accesses: dictionary) {
+      dictionary["title"] = newValue
+    }
+
+    get { dictionary["title"]! }
+    set { dictionary["title"] = newValue }
+  }
+
+   var text: String {
+    init(newValue, accesses: dictionary) {
+      dictionary["text"] = newValue
+    }
+
+    get { dictionary["text"]! }
+    set { dictionary["text"] = newValue }
+  }
+
+  init(title: String, text: String) {
+    self.title = title // calls init accessor to insert title into the dictionary
+    self.text = text   // calls init accessor to insert text into the dictionary
+
+    // it is an error to omit either initialization above
+  }
+}
+```
+
+Both `init` accessors document that they access `dictionary`, which allows them to insert the new values into the dictionary with the appropriate key as part of initialization. This allows one to fully abstract away the storage mechanism used in the type.
 
 With this proposal, property wrappers have no bespoke definite initialization support. Instead, the desugaring includes an `init` accessor for wrapped properties. The property wrapper code in the Motivation section will desugar to the following code:
 
