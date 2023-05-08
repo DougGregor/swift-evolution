@@ -176,7 +176,7 @@ The `identifier` in an `init-dependency-clause`, if provided, is the name of the
 
 ### `init` accessor signatures
 
-`init` accessor declarations can optionally specify a signature. An `init` accessor signature is composed of a parameter for the initial value, a list of stored properties that are initialized by this accessor specified with the `initializes:` label, and a list of stored properties that are accessed by this accessor specified with the `accesses:` labe, all of which are optionall:
+`init` accessor declarations can optionally specify a signature. An `init` accessor signature is composed of a parameter for the initial value, a list of stored properties that are initialized by this accessor specified with the `initializes:` label, and a list of stored properties that are accessed by this accessor specified with the `accesses:` labe, all of which are optional:
 
 ```swift
 struct S {
